@@ -2,7 +2,9 @@
 
 This guide was created after a user on the Monero subreddit asked if there is a way to use i2p for Monero now, before Kovri becomes available. The answer is obviously yes but I found the current i2p guides somewhat lacking so I decided to create a new one.
 
-The instructions contained herein are for setting up a Monero i2p connection from both the client side and the server side (server is TODO).
+The instructions contained herein are for setting up a Monero i2p connection from both the client side and the server side.
+
+It is worth setting up a docker container for i2p, details for a remote server setup are provided [here](./docker/README.md).
 
 ## i2p client setup
 
