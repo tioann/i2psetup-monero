@@ -4,8 +4,7 @@ CMD ["/sbin/my_init"]
 
 RUN apt-add-repository ppa:i2p-maintainers/i2p -y
 RUN apt-get update
-# Pin i2p version to 0.9.34 because 0.9.36 fails to install (broken dependencies?)
-RUN apt-get install -y i2p-router=0.9.34-1ubuntu3 i2p=0.9.34-1ubuntu3
+RUN apt-get install -y i2p
 
 # Copy over "service" file, this is a modified i2prouter-nowrapper script
 # better suited for the phusion docker image.

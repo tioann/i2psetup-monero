@@ -89,11 +89,59 @@ Actions described below will be alternating between remote server and local acti
 
 The i2p docker container is now fully available for further customization. 
 
-## notes
+## hidden service setup - monerod wallet endpoint
 
-- the container can be used to offer both client and server i2p connections. When specifying offered services remember to bind to the ports on the host using the container gateway IP, which can be found using this command (running on the host):
+We already have `monerod` running on the server and with the RPC listener bound to the 0.0.0.0 interface, similar to this:
+
+        monerod --rpc-bind-ip 0.0.0.0 --restricted-rpc --confirm-external-bind (...)
+
+We also need the IP address of the server as seen from the i2p container, which we can easily find from docker:
 
         docker inspect i2p-xxx | grep Gateway
 
-    Of course, this only works for host services, like monerod, that are not bound solely to the loopback interface (127.0.0.1).
+- click on "Hidden Services Manager" (or go directly to http://localhost:9999/i2ptunnelmgr)
+
+    ![ ](hidden-services-manager.png  "Hidden Services Manager")
+
+- under "I2P HIDDEN SERVICES", select "Standard" next to "New hidden service" and click "Create"
+
+    ![ ](new-hidden-service.png  "New hidden service")
+
+The fields that need to be specified are:
+
+- **Name**: Give a nice, reasonable name (monerod)
+- **Auto Start Tunnel**: Check this to have the service start automatically with the i2p service
+- **Host**: The IP address of the server, as seen from the container
+- **Port**: `monerod` listens for wallet connections on port 18081, this is the port we put here
+
+![ ](new-service-params.png  "New service params")
     
+For public nodes it is worth adjusting the parameters in the "Server Throttling" section. Once done, click "Save" at the bottom. You will be taken back to the i2p tunnel manager screen and the newly created server entry will be at the bottom of the "I2P HIDDEN SERVICES" section. The endpoint address will now be visible in "Base32 Address":
+
+![ ](service-endpoint.png  "Service endpoint")
+
+## hidden service setup - wallet client tunnel
+
+Setting up the docker i2p server on a local instance is somewhat simpler, no need to do the SSH server port forwarding to access the console, simply connect to http://172.17.0.2:7657 (or whatever the container IP address is)
+
+- click on "Hidden Services Manager" (or go directly to http://172.17.0.2:7657/i2ptunnelmgr)
+
+    ![ ](hidden-services-manager.png  "Hidden Services Manager")
+
+- under "I2P CLIENT TUNNELS", select "Standard" next to "New client tunnel" and click "Create"
+
+    ![ ](new-client-tunnel.png  "New client tunnel")
+
+The fields that need to be specified are:
+
+* **Name**: Give a nice, reasonable name
+* **Auto Start Tunnel**: Check this to have the client connection start (and stop) with the i2p service
+* **Port**: A local TCP port on your computer. 19081 is as good a number as any.
+* **Reachable by**: Select 0.0.0.0
+* **Tunnel Destination**: Enter the i2p address of the server endpoint.
+
+![ ](new-client-params.png  "New client params")
+
+Leave all the other options at their default settings and click "Save" at the bottom. You will be taken back to the i2p tunnel manager screen and the newly created client entry will be at the bottom of the page.
+
+To access the client tunnel from the wallet, use 172.17.0.2:19081 as the server address and port respectively. Note that once the client tunnel is created it takes a few minutes for the tunnel to be established.
